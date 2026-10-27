@@ -4,7 +4,9 @@ import numpy as np
 import warnings
 warnings.filterwarnings("ignore")
 
-# Intentamos importar las librerías geoespaciales
+# -------------------------------------------------
+# Importación segura de librerías geoespaciales
+# -------------------------------------------------
 try:
     import geopandas as gpd
     from libpysal.weights import Queen, Rook, KNN
@@ -14,6 +16,7 @@ try:
     import plotly.graph_objects as go
     from branca.colormap import linear
     GEOSPATIAL_OK = True
+    MISSING_LIB = ""
 except ModuleNotFoundError as e:
     GEOSPATIAL_OK = False
     MISSING_LIB = str(e)
@@ -27,20 +30,24 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Si faltan librerías geoespaciales, mostramos error claro y detenemos
 if not GEOSPATIAL_OK:
     st.error(f"""
     ### Error de dependencias geoespaciales
     
     No se pudo importar: `{MISSING_LIB}`
     
-    Esto suele ocurrir en Streamlit Cloud con `geopandas`.
+    Esto es un problema frecuente en Streamlit Cloud con `geopandas` / `fiona`.
     
-    **Soluciones posibles:**
-    1. Verifica que `requirements.txt` esté en la raíz del repositorio.
-    2. Espera 2-3 minutos y haz **Reboot app**.
-    3. Si persiste, considera desplegar en Railway (mejor soporte para GeoPandas).
+    **Qué hacer:**
+    1. Verifica que `requirements.txt` esté en la **raíz** del repositorio (mismo nivel que este archivo).
+    2. Asegúrate de que el contenido de `requirements.txt` sea el recomendado.
+    3. Ve a **Manage app → Reboot app**.
+    4. Si el error continúa, revisa los Logs y considera desplegar en Railway (mejor soporte para GeoPandas).
     """)
     st.stop()
+
 # -------------------------------------------------
 # Constantes
 # -------------------------------------------------
@@ -54,7 +61,7 @@ LABELS = {
     "lights": "Radiancia Nocturna (proxy)"
 }
 
-# Tasas de homicidio aproximadas por departamento (cifras oficiales calibradas)
+# Tasas de homicidio aproximadas por departamento (calibradas con cifras oficiales)
 CRIME_BASE = {
     "05": 28.5, "08": 32.0, "11": 15.5, "13": 29.0, "15": 12.0, "17": 18.0,
     "18": 35.0, "19": 48.0, "20": 27.0, "23": 25.0, "25": 11.0, "27": 42.0,
@@ -94,7 +101,7 @@ def load_gdf():
 
 @st.cache_data(show_spinner="Cargando datos reales de educación y construyendo panel...")
 def build_panel(_gdf):
-    # --- Educación real (Ministerio de Educación) ---
+    # Educación real
     educ_df = None
     try:
         educ_raw = pd.read_csv(EDUC_URL, low_memory=False)
@@ -125,7 +132,6 @@ def build_panel(_gdf):
     except Exception:
         educ_df = None
 
-    # --- Construcción del panel ---
     years = list(range(2011, 2023))
     records = []
     rng = np.random.default_rng(42)
