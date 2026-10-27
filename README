@@ -1,0 +1,28 @@
+---
+title: SpVAR Colombia - Panel Espacial Dinámico
+emoji: 🚀
+colorFrom: green
+colorTo: blue
+sdk: gradio
+sdk_version: 4.44.1
+app_file: app.py
+pinned: false
+license: mit
+---
+
+# SpVAR – Panel Espacial Dinámico (Departamentos de Colombia)
+
+Modelo de **Vector Autorregresivo Espacial (SpVAR)** / Panel Espacial Dinámico para los 33 departamentos de Colombia.
+
+### Características
+- Datos reales de **cobertura educativa** (Ministerio de Educación)
+- Tasas de homicidios calibradas con cifras oficiales
+- Selección automática de matriz de pesos espaciales (W)
+- Funciones de impulso-respuesta espaciales
+- Auditoría de estabilidad espectral
+- Mapas coropléticos interactivos (Folium)
+- Visualización 3D de visión nocturna (Plotly)
+- Interpretación automática de política pública
+
+**Autor:** Gustavo Quenguan  
+**Stack:** Gradio + GeoPandas + PySAL + Plotly
