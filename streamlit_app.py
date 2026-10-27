@@ -1,16 +1,22 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import geopandas as gpd
-from libpysal.weights import Queen, Rook, KNN
-from esda.moran import Moran
-import folium
-from streamlit_folium import st_folium
-import plotly.graph_objects as go
-from branca.colormap import linear
 import warnings
-
 warnings.filterwarnings("ignore")
+
+# Intentamos importar las librerías geoespaciales
+try:
+    import geopandas as gpd
+    from libpysal.weights import Queen, Rook, KNN
+    from esda.moran import Moran
+    import folium
+    from streamlit_folium import st_folium
+    import plotly.graph_objects as go
+    from branca.colormap import linear
+    GEOSPATIAL_OK = True
+except ModuleNotFoundError as e:
+    GEOSPATIAL_OK = False
+    MISSING_LIB = str(e)
 
 # -------------------------------------------------
 # Configuración de la página
@@ -21,7 +27,20 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
+if not GEOSPATIAL_OK:
+    st.error(f"""
+    ### Error de dependencias geoespaciales
+    
+    No se pudo importar: `{MISSING_LIB}`
+    
+    Esto suele ocurrir en Streamlit Cloud con `geopandas`.
+    
+    **Soluciones posibles:**
+    1. Verifica que `requirements.txt` esté en la raíz del repositorio.
+    2. Espera 2-3 minutos y haz **Reboot app**.
+    3. Si persiste, considera desplegar en Railway (mejor soporte para GeoPandas).
+    """)
+    st.stop()
 # -------------------------------------------------
 # Constantes
 # -------------------------------------------------
